@@ -6571,7 +6571,16 @@
         "supported_toolchains": ["GCC_ARM"],
         "public": false,
         "extra_labels": ["Ambiq_Micro", "Apollo3", "CORDIO"],
-        "device_has": ["MPU", "USTICKER", "SERIAL", "INTERRUPTIN", "LPTICKER", "STDIO_MESSAGES"],
+        "device_has": [
+            "MPU",
+            "USTICKER",
+            "SERIAL",
+            "INTERRUPTIN",
+            "LPTICKER",
+            "STDIO_MESSAGES",
+            "SPI",
+            "I2C"
+        ],
         "macros": []
     },
     "AMA3B1KK": {

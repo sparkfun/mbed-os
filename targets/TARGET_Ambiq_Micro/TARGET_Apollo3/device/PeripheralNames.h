@@ -31,6 +31,18 @@ extern "C"
         UART_1,
     } UARTName;
 
+typedef enum {
+    IOM_0 = 0,
+    IOM_1,
+    IOM_2,
+    IOM_3,
+    IOM_4,
+    IOM_5,
+
+    IOM_NUM,
+    IOM_ANY
+} IOMName;
+
 #ifdef __cplusplus
 }
 #endif
