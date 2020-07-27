@@ -182,30 +182,18 @@ void gpio_dir(gpio_t *obj, PinDirection direction)
 {
     MBED_ASSERT(gpio_is_connected(obj));
     MBED_ASSERT(direction < (PinDirection)PIN_DIR_ELEMENTS);
-    am_hal_gpio_pincfg_allow_t pinConfigBools;
 
-    if (direction == (PinDirection)PIN_INPUT)
-    {
-        obj->cfg.eGPInput = AM_HAL_GPIO_PIN_INPUT_ENABLE;
-        pinConfigBools.gpInput = true;
-        obj->cfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_DISABLE;
-        pinConfigBools.gpOutcfg = true;
+    uint32_t pad = (uint32_t)(obj->pad);
+    pin_function(pad, AM_HAL_PIN_0_GPIO);
+    if (direction == (PinDirection)PIN_INPUT) {        
+        pin_mode(pad, (InEnable | OutDisable | ReadPin));
     }
-    else if (direction == (PinDirection)PIN_OUTPUT)
-    {
-        obj->cfg.eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL;
-        pinConfigBools.gpOutcfg = true;
-        obj->cfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
-        pinConfigBools.driveStrength = true;
-        obj->cfg.eGPInput = AM_HAL_GPIO_PIN_INPUT_NONE;
-        pinConfigBools.gpInput = true;
+    else if (direction == (PinDirection)PIN_OUTPUT) {
+        pin_mode(pad, (InAuto | ReadPin | OutPushPull | DriveStrength2mA));
     }
-    else
-    {
+    else {
         MBED_ASSERT(false);
     }
-
-    ap3_hal_gpio_pinconfig_partial((uint32_t)(obj->pad), obj->cfg, pinConfigBools); //padRegMsk.byte, GPConfigMsk.byte, padAltCfgMsk.byte); // apply configuration
 }
 
 /** Set the output value
