@@ -23,18 +23,15 @@ SOFTWARE.
 #ifndef MBED_OBJECTS_SPI_H
 #define MBED_OBJECTS_SPI_H
 
-#include "objects_iom.h"
-
-// class TestPins; // todo: remove. this is a bug https://github.com/ARMmbed/mbed-os/issues/13299
-// class Se2435Pins; // todo: remove. this is a bug https://github.com/ARMmbed/mbed-os/issues/13299
+#include "iom_api.h"
 
 #if DEVICE_SPI_ASYNCH
 struct spi_s {
-    ap3_iom_control_t *iom_control;
+    iom_t iom_obj;
 };
 #else
 struct spi_u {
-	ap3_iom_control_t *iom_control;
+	iom_t iom_obj;
 };
 struct spi_s {
 	struct spi_u spi;

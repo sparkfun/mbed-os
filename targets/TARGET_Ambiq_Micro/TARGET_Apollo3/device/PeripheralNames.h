@@ -43,6 +43,9 @@ typedef enum {
     IOM_ANY
 } IOMName;
 
+typedef IOMName SPIName;
+typedef IOMName I2CName;
+
 #ifdef __cplusplus
 }
 #endif

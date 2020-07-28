@@ -25,19 +25,16 @@ SOFTWARE.
 
 #include "objects_iom.h"
 
-// class TestPins; // todo: remove. this is a bug https://github.com/ARMmbed/mbed-os/issues/13299
-// class Se2435Pins; // todo: remove. this is a bug https://github.com/ARMmbed/mbed-os/issues/13299
-
 #if DEVICE_I2C_ASYNCH
 struct i2c_s {
-    ap3_iom_control_t *iom_control;
+    iom_t iom_obj;
 };
 #else
 struct i2c_u {
-	ap3_iom_control_t *iom_control;
+	iom_t iom_obj;
 };
 struct i2c_s {
-	struct spi_u spi;
+	struct i2c_u i2c;
 };
 #endif // DEVICE_I2C_ASYNCH
 

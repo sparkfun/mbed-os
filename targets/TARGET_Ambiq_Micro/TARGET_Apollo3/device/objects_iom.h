@@ -23,19 +23,18 @@ SOFTWARE.
 #ifndef MBED_OBJECTS_IOM_H
 #define MBED_OBJECTS_IOM_H
 
+#include "am_hal_iom.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-typedef uint32_t ap3_iom_inst_t;
-
-typedef struct _ap3_iom_control_t
-{
-    ap3_iom_inst_t inst;        // IOM module instance
+struct iom_s {
+    uint32_t inst;              // IOM module instance
     void *handle;		        // IOM handle
     am_hal_iom_config_t cfg;	// IOM configuration
-} ap3_iom_control_t;
+};
 
 #ifdef __cplusplus
 }

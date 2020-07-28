@@ -27,47 +27,178 @@ SOFTWARE.
 #include "PeripheralPins.h"
 #include "mbed_assert.h"
 
+#define DEFAULT_CLK_FREQ (4000000)
+#define DEFAULT_SPI_MODE (AM_HAL_IOM_SPI_MODE_0)
+
+#define standin_fn() printf("stand in for '%s', file: '%s', line: %d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__)
+
+am_hal_iom_transfer_t xfer = {0};
+
+SPIName spi_get_peripheral_name(PinName mosi, PinName miso, PinName sclk){
+    uint32_t iom_mosi = pinmap_peripheral(mosi, spi_master_mosi_pinmap());
+    uint32_t iom_miso = pinmap_peripheral(miso, spi_master_miso_pinmap());
+    uint32_t iom_sclk = pinmap_peripheral(sclk, spi_master_clk_pinmap());
+
+    uint32_t iom;
+
+    if (miso == NC) {
+        iom = pinmap_merge(iom_mosi, iom_sclk);
+    } else if (mosi == NC) {
+        iom = pinmap_merge(iom_miso, iom_sclk);
+    } else {
+        uint32_t iom_data = pinmap_merge(iom_mosi, iom_miso);
+        iom = pinmap_merge(iom_data, iom_sclk);
+    }
+
+    if((int)iom == NC){
+        return IOM_NUM;
+    }
+
+    return (SPIName)iom;
+}
+
+void spi_get_capabilities(PinName ssel, bool slave, spi_capabilities_t *cap){
+    MBED_ASSERT(cap);
+
+    SPIName iom_ssel = (SPIName)pinmap_peripheral(ssel, spi_master_cs_pinmap());
+
+    cap->minimum_frequency = 0;
+    cap->maximum_frequency = AM_HAL_IOM_MAX_FREQ;
+    cap->word_length = 0x00000080;
+    cap->slave_delay_between_symbols_ns = 0;
+    cap->clk_modes = 0x0F;
+    cap->support_slave_mode = (iom_ssel == IOM_ANY) ? true : false; 
+    cap->hw_cs_handle = false;
+    cap->async_mode = false;
+    cap->tx_rx_buffers_equal_length = false;
+}
+
 void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel){
-    MBED_ASSERT(0);
+    MBED_ASSERT(obj);
+
+    MBED_ASSERT((int)ssel == NC);
+
+    // iom determination
+    SPIName iom = spi_get_peripheral_name(mosi, miso, sclk);
+    SPIName iom_ssel = (SPIName)pinmap_peripheral(ssel, spi_master_cs_pinmap());
+    MBED_ASSERT((int)iom != IOM_NUM);
+    MBED_ASSERT((int)iom != IOM_ANY);
+
+    // iom configuration
+    obj->spi.iom_obj.iom.inst = (uint32_t)iom;
+    obj->spi.iom_obj.iom.cfg.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
+    obj->spi.iom_obj.iom.cfg.ui32ClockFreq = DEFAULT_CLK_FREQ;
+    obj->spi.iom_obj.iom.cfg.eSpiMode = DEFAULT_SPI_MODE;
+    obj->spi.iom_obj.iom.cfg.pNBTxnBuf = NULL;
+    obj->spi.iom_obj.iom.cfg.ui32NBTxnBufLength = 0;
+
+    // invariant xfer settings
+    xfer.ui32InstrLen = 0;
+    xfer.ui32Instr = 0;
+    xfer.bContinue = false;
+    xfer.ui8RepeatCount = 0;
+    xfer.ui8Priority = 1;
+    xfer.ui32PauseCondition = 0;
+    xfer.ui32StatusSetClr = 0;
+
+    // pin configuration
+    pinmap_pinout(sclk, spi_master_clk_pinmap());
+    if((int)mosi != NC){ pinmap_pinout(mosi, spi_master_mosi_pinmap()); }
+    if((int)miso != NC){ pinmap_pinout(miso, spi_master_miso_pinmap()); }
+    if((int)ssel != NC){ pinmap_pinout(ssel, spi_master_cs_pinmap()); }
+
+    // initialization
+    iom_init(&obj->spi.iom_obj);
 }
 
 void spi_free(spi_t *obj){
-    MBED_ASSERT(0);
+    iom_deinit(&obj->spi.iom_obj);
 }
 
 void spi_format(spi_t *obj, int bits, int mode, int slave){
-    MBED_ASSERT(0);
+    MBED_ASSERT(obj);
+    obj->spi.iom_obj.iom.cfg.eSpiMode = (am_hal_iom_spi_mode_e)mode;
+    iom_init(&obj->spi.iom_obj);
 }
 
 void spi_frequency(spi_t *obj, int hz) {
-    MBED_ASSERT(0);
+    MBED_ASSERT(obj);
+    obj->spi.iom_obj.iom.cfg.ui32ClockFreq = (uint32_t)hz;
+    iom_init(&obj->spi.iom_obj);
 }
 
 int spi_master_write(spi_t *obj, int value) {
-    MBED_ASSERT(0);
-    return 0;
+    uint32_t rxval = 0;
+    spi_master_block_write(obj, (const char *)&value, 1, (char*)&rxval, 1, 0x00);
+    return rxval;
 }
 
 int spi_master_block_write(spi_t *obj, const char *tx_buffer, int tx_length, char *rx_buffer, int rx_length, char write_fill){
-    MBED_ASSERT(0);
-    return 0;
+    MBED_ASSERT(obj);
+
+    int chars_handled = 0;
+
+    // // perform a duplex xfer for the smaller of the two buffers
+    // xfer.eDirection = AM_HAL_IOM_FULLDUPLEX;
+    // xfer.ui32NumBytes = (tx_length > rx_length) ? rx_length : tx_length;
+    // xfer.pui32TxBuffer = (uint32_t *)tx_buffer;
+    // xfer.pui32RxBuffer = (uint32_t *)rx_buffer;
+
+    // if(xfer.ui32NumBytes){
+    //     uint32_t status = am_hal_iom_spi_blocking_fullduplex(obj->spi.iom_obj.iom.handle, &xfer);
+    //     if(AM_HAL_STATUS_SUCCESS != status){
+    //         return 0;
+    //     }
+    //     chars_handled += xfer.ui32NumBytes;
+    // }
+
+    // // handle difference between buffers
+    // if(tx_length != rx_length){
+    //     bool Rw = (rx_length >= tx_length);
+    //     xfer.eDirection = (Rw) ? AM_HAL_IOM_RX : AM_HAL_IOM_TX;
+    //     xfer.ui32NumBytes = (Rw) ? (rx_length - tx_length) : (tx_length - rx_length);
+    //     xfer.pui32TxBuffer = (Rw) ? NULL : (uint32_t*)(tx_buffer + chars_handled);
+    //     xfer.pui32RxBuffer = (Rw) ? (uint32_t*)(rx_buffer + chars_handled) : NULL;
+    //     uint32_t status = am_hal_iom_blocking_transfer(obj->spi.iom_obj.iom.handle, &xfer);
+    //     printf("simplex transfer status: %d\n", status);
+    //     if(AM_HAL_STATUS_SUCCESS != status){
+    //         return chars_handled;
+    //     }
+    //     chars_handled += xfer.ui32NumBytes;
+    // }
+
+    // temporary patch
+    // only send data out - full duplex xfers are broken right now and need a second look
+
+    xfer.eDirection = AM_HAL_IOM_TX;
+    xfer.ui32NumBytes = tx_length;
+    xfer.pui32TxBuffer = (uint32_t*)(tx_buffer);
+    xfer.pui32RxBuffer = NULL;
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_blocking_transfer(obj->spi.iom_obj.iom.handle, &xfer));
+    chars_handled += tx_length;
+
+    return chars_handled;
 }
 
 int spi_slave_receive(spi_t *obj) {
+    standin_fn();
     MBED_ASSERT(0);
     return 0;
 }
 
 int spi_slave_read(spi_t *obj) {
+    standin_fn();
     MBED_ASSERT(0);
     return 0;
 }
 
 void spi_slave_write(spi_t *obj, int value) {
+    standin_fn();
     MBED_ASSERT(0);
 }
 
 int spi_busy(spi_t *obj) {
+    standin_fn();
     MBED_ASSERT(0);
     return 0;
 }

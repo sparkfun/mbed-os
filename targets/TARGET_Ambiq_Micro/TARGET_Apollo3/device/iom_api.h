@@ -23,16 +23,22 @@ SOFTWARE.
 #ifndef MBED_IOM_API_H
 #define MBED_IOM_API_H
 
-#include "device.h"
-#include "pinmap.h"
 #include "hal/dma_api.h"
 #include "hal/buffer.h"
 
-#include "am_hal_iom.h"
+#include "am_mcu_apollo.h"
 
 #include "objects_iom.h"
 
-void iom_init(ap3_iom_control_t* iom);
-void iom_deinit(ap3_iom_control_t* iom);
+/** Asynch IOM HAL structure
+ */
+typedef struct {
+    struct iom_s iom;        /**< Target specific SPI structure */
+    // struct buffer_s tx_buff; /**< Tx buffer */
+    // struct buffer_s rx_buff; /**< Rx buffer */
+} iom_t;
+
+void iom_init(iom_t* obj);
+void iom_deinit(iom_t* obj);
 
 #endif // MBED_IOM_API_H

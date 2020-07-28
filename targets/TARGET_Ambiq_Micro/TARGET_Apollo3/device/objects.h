@@ -26,6 +26,7 @@ extern "C" {
 
 #include "objects_gpio.h"
 #include "objects_uart.h"
+#include "objects_iom.h"
 #include "objects_spi.h"
 #include "objects_i2c.h"
 

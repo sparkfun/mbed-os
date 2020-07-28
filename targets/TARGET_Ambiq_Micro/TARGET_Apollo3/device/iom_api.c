@@ -23,29 +23,31 @@ SOFTWARE.
 #include "iom_api.h"
 #include "mbed_assert.h"
 
-void iom_init(ap3_iom_control_t* iom){
-    MBED_ASSERT(iom);
+void iom_init(iom_t* obj){
+    MBED_ASSERT(obj);
 
-    if(iom->handle){
-        iom_deinit(iom);
+    if(obj->iom.handle){
+        iom_deinit(obj);
     }
 
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_initialize(iom->inst, &iom->handle));
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_power_ctrl(iom->handle, AM_HAL_SYSCTRL_WAKE, false));
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_configure(iom->handle, &iom->cfg));
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_enable(iom->handle));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_initialize(obj->iom.inst, &obj->iom.handle));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_power_ctrl(obj->iom.handle, AM_HAL_SYSCTRL_WAKE, false));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_configure(obj->iom.handle, &obj->iom.cfg));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_enable(obj->iom.handle));
 
     // this merely configures the internal peripheral - the desired pins still need to be configured
 }
 
-void iom_deinit(ap3_iom_control_t* iom){
-    if(!iom->handle){
+void iom_deinit(iom_t* obj){
+    MBED_ASSERT(obj);
+    
+    if(!obj->iom.handle){
         return;
     }
 
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_disable(iom->handle));
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_power_ctrl(iom->handle, AM_HAL_SYSCTRL_DEEPSLEEP, false));
-    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_uninitialize(iom->handle));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_disable(obj->iom.handle));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_power_ctrl(obj->iom.handle, AM_HAL_SYSCTRL_DEEPSLEEP, false));
+    MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_uninitialize(obj->iom.handle));
 
-    iom->handle = NULL;
+    obj->iom.handle = NULL;
 }
