@@ -34,8 +34,6 @@ void iom_init(iom_t* obj){
     MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_power_ctrl(obj->iom.handle, AM_HAL_SYSCTRL_WAKE, false));
     MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_configure(obj->iom.handle, &obj->iom.cfg));
     MBED_ASSERT(AM_HAL_STATUS_SUCCESS == am_hal_iom_enable(obj->iom.handle));
-
-    // this merely configures the internal peripheral - the desired pins still need to be configured
 }
 
 void iom_deinit(iom_t* obj){

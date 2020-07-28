@@ -27,12 +27,12 @@ SOFTWARE.
 #include "PeripheralPins.h"
 #include "mbed_assert.h"
 
-#define DEFAULT_CLK_FREQ (4000000)
+#define DEFAULT_CLK_FREQ (AM_HAL_IOM_4MHZ)
 #define DEFAULT_SPI_MODE (AM_HAL_IOM_SPI_MODE_0)
 
 #define standin_fn() printf("stand in for '%s', file: '%s', line: %d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__)
 
-am_hal_iom_transfer_t xfer = {0};
+static am_hal_iom_transfer_t xfer = {0};
 
 SPIName spi_get_peripheral_name(PinName mosi, PinName miso, PinName sclk){
     uint32_t iom_mosi = pinmap_peripheral(mosi, spi_master_mosi_pinmap());
@@ -112,6 +112,7 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
 }
 
 void spi_free(spi_t *obj){
+    MBED_ASSERT(obj);
     iom_deinit(&obj->spi.iom_obj);
 }
 
@@ -123,6 +124,9 @@ void spi_format(spi_t *obj, int bits, int mode, int slave){
 
 void spi_frequency(spi_t *obj, int hz) {
     MBED_ASSERT(obj);
+    if(hz > AM_HAL_IOM_MAX_FREQ){
+        hz = AM_HAL_IOM_MAX_FREQ;
+    }
     obj->spi.iom_obj.iom.cfg.ui32ClockFreq = (uint32_t)hz;
     iom_init(&obj->spi.iom_obj);
 }
@@ -169,6 +173,7 @@ int spi_master_block_write(spi_t *obj, const char *tx_buffer, int tx_length, cha
 
     // temporary patch
     // only send data out - full duplex xfers are broken right now and need a second look
+    // note: perhaps need to enable full duplex with advanced configuration? (AM_HAL_IOM_REQ_SPI_FULLDUPLEX, am_hal_iom_control)
 
     xfer.eDirection = AM_HAL_IOM_TX;
     xfer.ui32NumBytes = tx_length;
@@ -200,6 +205,7 @@ void spi_slave_write(spi_t *obj, int value) {
 int spi_busy(spi_t *obj) {
     standin_fn();
     MBED_ASSERT(0);
+    // am_hal_iom_status_get ???
     return 0;
 }
 

@@ -77,9 +77,13 @@ extern "C"
         // mbed original LED naming
         LED1 = AM_BSP_GPIO_LED0,
 
-        // Qwiic
-        QWIIC_SCL = 8,
-        QWIIC_SDA = 9,
+        // I2C
+        I2C_SCL = 8,
+        I2C_SDA = 9,
+
+        // Qwiic        
+        QWIIC_SCL = I2C_SCL,
+        QWIIC_SDA = I2C_SDA,
 
         // Accelerometer
         ACC_SCL = QWIIC_SCL,

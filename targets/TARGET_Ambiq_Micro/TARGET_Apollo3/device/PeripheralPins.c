@@ -33,10 +33,26 @@ const PinMap PinMap_DAC[] = {
 
 /************I2C***************/
 const PinMap PinMap_I2C_SDA[] = {
+	{6, IOM_0, AM_HAL_PIN_6_M0SDAWIR3},
+	{9, IOM_1, AM_HAL_PIN_9_M1SDAWIR3},
+	{25, IOM_2, AM_HAL_PIN_25_M2SDAWIR3},
+	{40, IOM_4, AM_HAL_PIN_40_M4SDAWIR3},
+	{49, IOM_5, AM_HAL_PIN_49_M5SDAWIR3},
+#if defined (AM_PACKAGE_BGA)
+	{43, IOM_3, AM_HAL_PIN_43_M3SDAWIR3},
+#endif // defined (AM_PACKAGE_BGA)
 	{NC, NC, 0}
 };
 
 const PinMap PinMap_I2C_SCL[] = {
+	{5, IOM_0, AM_HAL_PIN_5_M0SCL},
+	{8, IOM_1, AM_HAL_PIN_8_M1SCL},
+	{27, IOM_2, AM_HAL_PIN_27_M2SCL},
+	{39, IOM_4, AM_HAL_PIN_39_M4SCL},
+	{48, IOM_5, AM_HAL_PIN_48_M5SCL},
+#if defined (AM_PACKAGE_BGA)
+	{42, IOM_3, AM_HAL_PIN_42_M3SCL},
+#endif // defined (AM_PACKAGE_BGA)
 	{NC, NC, 0}
 };
 
