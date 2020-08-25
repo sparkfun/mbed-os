@@ -95,7 +95,7 @@ typedef enum
     A35 = D35,
 
     // ADC Defaults
-    ADC = A11,
+    ADCPIN = A11,
 
     // Not connected
     NC = NC_VAL

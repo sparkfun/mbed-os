@@ -45,7 +45,7 @@ typedef enum
     A31 = D31,
 
     // ADC Defaults
-    ADC = A16,
+    ADCPIN = A16,
 
     // LEDs
     LED_RED = AM_BSP_GPIO_LED_RED,
