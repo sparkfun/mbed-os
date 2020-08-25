@@ -63,6 +63,9 @@ typedef enum
     A15 = D15,
     A16 = D16,
 
+    // ADC Defaults
+    ADC = A0,
+
     // LEDs
     LED_BLUE = AM_BSP_GPIO_LED_BLUE,
 
