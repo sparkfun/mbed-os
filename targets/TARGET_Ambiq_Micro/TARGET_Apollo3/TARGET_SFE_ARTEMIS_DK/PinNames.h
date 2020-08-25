@@ -71,9 +71,6 @@ typedef enum
     A34 = D34,
     A35 = D35,
 
-    // ADC Defaults
-    ADCPIN = A13,
-
     // LEDs
     LED_BLUE = AM_BSP_GPIO_LED_BLUE,
 
@@ -114,6 +111,9 @@ typedef enum
 
 #define STDIO_UART_TX USBTX
 #define STDIO_UART_RX USBRX
+
+// ADC Defaults
+#define ADCPIN A13
 
 #ifdef __cplusplus
 }

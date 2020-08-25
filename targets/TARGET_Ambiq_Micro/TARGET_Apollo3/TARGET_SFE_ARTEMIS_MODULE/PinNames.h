@@ -94,12 +94,12 @@ typedef enum
     A34 = D34,
     A35 = D35,
 
-    // ADC Defaults
-    ADCPIN = A11,
-
     // Not connected
     NC = NC_VAL
 } PinName;
+
+// ADC Defaults
+#define ADCPIN A11
 
 #ifdef __cplusplus
 }
