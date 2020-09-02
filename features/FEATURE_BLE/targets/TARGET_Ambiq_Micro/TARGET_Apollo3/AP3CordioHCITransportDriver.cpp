@@ -63,7 +63,11 @@ uint16_t AP3CordioHCITransportDriver::write(uint8_t packet_type, uint16_t len, u
 #endif
         data[8] = 0;
     }
-    return ap3_hciDrvWrite(packet_type, len, data);
+    uint16_t retLen = ap3_hciDrvWrite(packet_type, len, data);
+#if CORDIO_ZERO_COPY_HCI
+    WsfMsgFree(data);
+#endif
+    return retLen;
 }
 
 //Ugly Mutlifile implementation
