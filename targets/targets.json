@@ -7463,6 +7463,10 @@
         "inherits": ["AMA3B1KK"],
         "components_add": ["lis2dh12", "hm01b0"]
     },
+    "SFE_ARTEMIS_MM_PB": {
+        "inherits": ["AMA3B1KK"],
+        "components_add": ["lis2dh12", "hm01b0"]
+    },
     "__build_tools_metadata__": {
         "version": "1",
         "public": false
