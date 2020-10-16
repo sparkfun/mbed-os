@@ -41,6 +41,8 @@ typedef enum
     AUD_LRCLK = AM_BSP_GPIO_AUD_LRCLK,
     AUD_BCLK = AM_BSP_GPIO_AUD_BCLK,
 
+    BATT_VIN = AM_BSP_GPIO_BATT_VIN,
+
     I2C_INT = AM_BSP_GPIO_I2C_INT, // other I2C lines covered below
 
     SDIO_CLK = AM_BSP_GPIO_SDIO_CLK,
