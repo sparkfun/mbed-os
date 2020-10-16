@@ -12,7 +12,7 @@
 
 //*****************************************************************************
 //
-// Copyright (c) 2020, Ambiq Micro
+// Copyright (c) 2020, Ambiq Micro, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.4.2 of the AmbiqSuite Development Package.
+// This is part of revision 2.5.1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -150,7 +150,6 @@
 #define AM_HAL_PIN_12_NCE12       (1)
 #define AM_HAL_PIN_12_CTIM0       (2)
 #define AM_HAL_PIN_12_GPIO        (3)
-#define AM_HAL_PIN_12_SLnCE       (4)
 #define AM_HAL_PIN_12_PDMCLK      (5)
 #define AM_HAL_PIN_12_UART0CTS    (6)
 #define AM_HAL_PIN_12_UART1TX     (7)
@@ -248,7 +247,7 @@
 #define AM_HAL_PIN_23_GPIO        (3)
 #define AM_HAL_PIN_23_I2SWCLK     (4)
 #define AM_HAL_PIN_23_CMPOUT      (5)
-#define AM_HAL_PIN_23_MSPI13      (6)
+#define AM_HAL_PIN_23_MSPI3       (6)
 #define AM_HAL_PIN_23_EXTXT       (7)
 
 #define AM_HAL_PIN_24_UART1TX     (0)

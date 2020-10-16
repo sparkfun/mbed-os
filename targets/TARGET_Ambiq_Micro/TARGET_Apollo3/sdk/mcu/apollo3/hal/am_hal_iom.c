@@ -13,7 +13,7 @@
 
 //*****************************************************************************
 //
-// Copyright (c) 2020, Ambiq Micro
+// Copyright (c) 2020, Ambiq Micro, Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 2.4.2 of the AmbiqSuite Development Package.
+// This is part of revision 2.5.1 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -213,31 +213,64 @@ typedef struct
     // Interface mode (SPI or I2C).
     //
     am_hal_iom_mode_e       eInterfaceMode;
+
+    //
+    // Non-Blocking transaction Tranfer Control Buffer.
+    //
     uint32_t                *pNBTxnBuf;
     uint32_t                ui32NBTxnBufLength;
 
+    //
+    // Saves the user application defined interrupt configuration.
+    //
     uint32_t                ui32UserIntCfg;
+
+    //
+    // Saves the transaction interrupt state for non-blocking interrupt service.
+    //
     uint32_t                ui32TxnInt;
 
-    uint32_t                ui32LastIdxProcessed;
-    uint32_t                ui32MaxTransactions;
-    volatile uint32_t       ui32NumPendTransactions;
     //
-    // Stores the CQ callbacks.
+    // Index of last non-blocking transaction processed in CQ.
+    //
+    uint32_t                ui32LastIdxProcessed;
+
+    // Maximum number of transactions allowed in the CQ.
+    uint32_t                ui32MaxTransactions;
+
+    //
+    // Number of pending transactions in the CQ.
+    //
+    volatile uint32_t       ui32NumPendTransactions;
+
+    //
+    // Stores the CQ callbacks and contexts.
     //
     am_hal_iom_callback_t   pfnCallback[AM_HAL_IOM_MAX_PENDING_TRANSACTIONS];
     void                    *pCallbackCtxt[AM_HAL_IOM_MAX_PENDING_TRANSACTIONS];
 #if (AM_HAL_IOM_CQ == 1)
+    //
+    // Handle to the CQ.
+    //
     void                    *pCmdQHdl;
-    // To support sequence
+
+    //
+    // To support sequence.
+    //
     am_hal_iom_seq_e        eSeq;
     bool                    bAutonomous;
-    // This is used to track the number of transactions in a sequence
+
+    //
+    // This is used to track the number of transactions in a sequence.
+    //
     uint32_t                ui32NumSeqTransactions;
     volatile bool           bRestart;
     uint32_t                block;
+
+    //
     // To support high priority transactions - out of band
     // High Priority DMA transactions
+    //
     volatile bool           bHP;
     uint32_t                ui32NumHPEntries;
     uint32_t                ui32NumHPPendingEntries;
@@ -257,9 +290,15 @@ typedef struct
     // Delay timeout value.
     //
     uint32_t                waitTimeout;
-    // Configured clock time
+
+    //
+    // Configured clock time.
+    //
     uint32_t                ui32BitTimeTicks;
 
+    //
+    // IOM register state for power down save/restore.
+    //
     am_hal_iom_register_state_t registerState;
     uint8_t                 dcx[AM_HAL_IOM_MAX_CS_SPI + 1];
 
@@ -359,7 +398,7 @@ build_txn_cmdlist(am_hal_iom_state_t       *pIOMState,
     uint32_t                ui32Cmd;
     uint32_t                ui32Module = pIOMState->ui32Module;
     uint32_t                ui32Dir = psTransaction->eDirection;
-    uint32_t                ui32SRAMAddress;
+    uint32_t                ui32DMAAddress;
 
     //
     // Command for OFFSETHI
@@ -390,8 +429,8 @@ build_txn_cmdlist(am_hal_iom_state_t       *pIOMState,
     // Command to set DMATARGADDR
     //
     pCQEntry->ui32DMATARGADDRAddr = (uint32_t)&IOMn(ui32Module)->DMATARGADDR;
-    ui32SRAMAddress = (ui32Dir == AM_HAL_IOM_TX) ? (uint32_t)psTransaction->pui32TxBuffer : (uint32_t)psTransaction->pui32RxBuffer;
-    pCQEntry->ui32DMATARGADDRVal  = ui32SRAMAddress;
+    ui32DMAAddress = (ui32Dir == AM_HAL_IOM_TX) ? (uint32_t)psTransaction->pui32TxBuffer : (uint32_t)psTransaction->pui32RxBuffer;
+    pCQEntry->ui32DMATARGADDRVal  = ui32DMAAddress;
 
     //
     // Command to set DMACFG to start the DMA operation
@@ -970,11 +1009,21 @@ am_hal_iom_CQDisable(void *pHandle)
     return am_hal_cmdq_disable(pIOMState->pCmdQHdl);
 } // am_hal_iom_CQDisable()
 
+//*****************************************************************************
+//
+//! @brief Dummy Callback.
+//!
+//*****************************************************************************
 static void iom_dummy_callback(void *pCallbackCtxt, uint32_t status)
 {
     // Dummy - Do nothing
 }
 
+//*****************************************************************************
+//
+//! @brief Callback when end of sequence is reached.
+//!
+//*****************************************************************************
 static void iom_seq_loopback(void *pCallbackCtxt, uint32_t status)
 {
     // Reset the state to allow serving callbacks for next set
@@ -987,6 +1036,17 @@ static void iom_seq_loopback(void *pCallbackCtxt, uint32_t status)
     IOMn(pIOMState->ui32Module)->CQSETCLEAR = AM_HAL_IOM_SC_UNPAUSE_SEQLOOP;
 }
 
+//*****************************************************************************
+//
+//! @brief Pause the Command Queue.
+//!
+//! @param pIOMState       - pointer to the IOM internal state.
+//!
+//! This function pauses the Command Queue operation.
+//!
+//! @return HAL status of the operation.
+//
+//*****************************************************************************
 static uint32_t iom_cq_pause(am_hal_iom_state_t *pIOMState)
 {
     uint32_t status = AM_HAL_STATUS_SUCCESS;
@@ -1027,6 +1087,17 @@ static uint32_t iom_cq_pause(am_hal_iom_state_t *pIOMState)
     return status;
 }
 
+//*****************************************************************************
+//
+//! @brief Program the DMA directly.
+//!
+//! @param pHandle       - pointer the IOM instance handle.
+//!
+//! This function pauses the Command Queue operation.
+//!
+//! @return HAL status of the operation.
+//
+//*****************************************************************************
 static void
 program_dma(void *pHandle)
 {
@@ -1070,6 +1141,18 @@ program_dma(void *pHandle)
     IOMn(ui32Module)->CMD = pDMAEntry->ui32CMDVal;
 }
 
+//*****************************************************************************
+//
+//! @brief Schedule a high priority transaction.
+//!
+//! @param pIOMState       - pointer to the IOM internal state.
+//! @param numTrans        - number of transaction to schedule in a block.
+//!
+//! This function pauses the Command Queue operation.
+//!
+//! @return HAL status of the operation.
+//
+//*****************************************************************************
 static uint32_t
 sched_hiprio(am_hal_iom_state_t *pIOMState, uint32_t numTrans)
 {
@@ -1108,9 +1191,23 @@ sched_hiprio(am_hal_iom_state_t *pIOMState, uint32_t numTrans)
         program_dma(pIOMState);
     }
     return ui32Status;
-}
+} // sched_hiprio()
 
 
+//*****************************************************************************
+//
+//! @brief Add a high priority transaction.
+//!
+//! @param pHandle       - pointer the IOM instance handle.
+//! @param psTransaction - pointer to IOM transaction.
+//! @param pfnCallback   - pointer to the callback for transaction (could be NULL).
+//! @param pCallbackCtxt - pointer to the context to the callback (could be NULL).
+//!
+//! This function adds a function to the internal high priority transaction queue.
+//!
+//! @return HAL status of the operation.
+//
+//*****************************************************************************
 static uint32_t
 iom_add_hp_transaction(void *pHandle,
                        am_hal_iom_transfer_t *psTransaction,
@@ -1160,7 +1257,7 @@ iom_add_hp_transaction(void *pHandle,
 
     pIOMState->ui32NextHPIdx++;
     return AM_HAL_STATUS_SUCCESS;
-} // am_hal_iom_DmaAddTransaction()
+} // iom_add_hp_transaction()
 
 #else   // AM_HAL_IOM_CQ != 1
 static void
@@ -2019,7 +2116,10 @@ am_hal_iom_power_ctrl(void *pHandle,
             //
             // Enable power control.
             //
-            am_hal_pwrctrl_periph_enable((am_hal_pwrctrl_periph_e)(AM_HAL_PWRCTRL_PERIPH_IOM0 + pIOMState->ui32Module));
+            if ( AM_HAL_STATUS_SUCCESS != am_hal_pwrctrl_periph_enable((am_hal_pwrctrl_periph_e)(AM_HAL_PWRCTRL_PERIPH_IOM0 + pIOMState->ui32Module)) )
+            {
+                return AM_HAL_STATUS_HW_ERR;
+            }
 
             if (bRetainState)
             {
@@ -2084,7 +2184,10 @@ am_hal_iom_power_ctrl(void *pHandle,
             //
             // Disable power control.
             //
-            am_hal_pwrctrl_periph_disable((am_hal_pwrctrl_periph_e)(AM_HAL_PWRCTRL_PERIPH_IOM0 + pIOMState->ui32Module));
+            if ( AM_HAL_STATUS_SUCCESS != am_hal_pwrctrl_periph_disable((am_hal_pwrctrl_periph_e)(AM_HAL_PWRCTRL_PERIPH_IOM0 + pIOMState->ui32Module)) )
+            {
+                return AM_HAL_STATUS_HW_ERR;
+            }
             break;
 
         default:
@@ -3090,18 +3193,27 @@ am_hal_iom_spi_blocking_fullduplex(void *pHandle,
             //
             // Safe to read the FIFO, read 4 bytes
             //
-            *pui32RxBuffer++ = IOMn(ui32Module)->FIFOPOP;
+            uint32_t ui32Read;
+            ui32Read = IOMn(ui32Module)->FIFOPOP;
 #if MANUAL_POP
             IOMn(ui32Module)->FIFOPOP = 0x11111111;
 #endif
             ui32FifoSiz -= 4;
             if (ui32RxBytes >= 4)
             {
+                *pui32RxBuffer++ = ui32Read;
                 ui32RxBytes -= 4;
             }
             else
             {
-                ui32RxBytes = 0;
+                // Copy byte by byte - so as to not corrupt the rest of the buffer
+                uint8_t *pui8Buffer = (uint8_t *)pui32RxBuffer;
+                do
+                {
+                    *pui8Buffer++ = ui32Read & 0xFF;
+                    ui32Read >>= 8;
+                } while (--ui32RxBytes);
+
             }
         }
     }
@@ -3115,28 +3227,31 @@ am_hal_iom_spi_blocking_fullduplex(void *pHandle,
                             IOM0_STATUS_IDLEST_Msk,
                             true);
 
-    if ( ui32Status != AM_HAL_STATUS_SUCCESS )
+    if ( ui32Status == AM_HAL_STATUS_SUCCESS )
     {
-        return ui32Status;
-    }
+        ui32Status = internal_iom_get_int_err(ui32Module, 0);
 
-    ui32Status = internal_iom_get_int_err(ui32Module, 0);
-
-    if (ui32Status == AM_HAL_STATUS_SUCCESS)
-    {
-        if (ui32Bytes)
+        if (ui32Status == AM_HAL_STATUS_SUCCESS)
         {
-            // Indicates transaction did not finish for some reason
-            ui32Status = AM_HAL_STATUS_FAIL;
+            if (ui32Bytes)
+            {
+                // Indicates transaction did not finish for some reason
+                ui32Status = AM_HAL_STATUS_FAIL;
+            }
         }
     }
-    else
+
+    if ( ui32Status != AM_HAL_STATUS_SUCCESS )
     {
         // Do Error recovery
         // Reset Submodule & FIFO
         internal_iom_reset_on_error(pIOMState, IOMn(ui32Module)->INTSTAT);
     }
 
+    //
+    // Revert FULLDUPLEX mode
+    //
+    IOMn(ui32Module)->MSPICFG &= ~_VAL2FLD(IOM0_MSPICFG_FULLDUP, 1);
     //
     // Clear interrupts
     // Re-enable IOM interrupts.
@@ -3213,7 +3328,9 @@ uint32_t am_hal_iom_control(void *pHandle, am_hal_iom_request_e eReq, void *pArg
                 status = AM_HAL_STATUS_INVALID_ARG;
             }
             break;
-        case AM_HAL_IOM_REQ_SPI_FULLDUPLEX:
+        case AM_HAL_IOM_REQ_SPI_FULLDUPLEX: // Not supported
+            status = AM_HAL_STATUS_INVALID_OPERATION;
+#if 0
             if (pArgs)
             {
                 IOMn(ui32Module)->MSPICFG_b.FULLDUP = *((uint32_t *)pArgs);
@@ -3222,6 +3339,7 @@ uint32_t am_hal_iom_control(void *pHandle, am_hal_iom_request_e eReq, void *pArg
             {
                 status = AM_HAL_STATUS_INVALID_ARG;
             }
+#endif
             break;
         case AM_HAL_IOM_REQ_SPI_RDTHRESH:
             if (pArgs)
