@@ -1,4 +1,4 @@
-#include "am_hal_interrupt.c"
+#include "am_mcu_apollo.h"
 
 // called before main
 void mbed_sdk_init()
