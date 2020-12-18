@@ -7463,6 +7463,9 @@
         "inherits": ["AMA3B1KK"],
         "components_add": ["lis2dh12", "hm01b0"]
     },
+	 "LoRa_THING_PLUS_expLoRaBLE": {
+        "inherits": ["AMA3B1KK"]
+    },
     "__build_tools_metadata__": {
         "version": "1",
         "public": false
