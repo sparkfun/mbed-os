@@ -77,7 +77,7 @@ extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_LED_BLUE;
 //  BUTTON0 pin: Labeled 10 on the LoRa Thing Plus.
 //
 //*****************************************************************************
-#define AM_BSP_GPIO_BUTTON0             	48
+#define AM_BSP_GPIO_BUTTON0             	4
 extern const am_hal_gpio_pincfg_t       g_AM_BSP_GPIO_BUTTON0;
 
 //*****************************************************************************
