@@ -78,7 +78,7 @@
 // communication issues that might otherwise go unnoticed.
 //
 //*****************************************************************************
-#define ENABLE_BLE_HEARTBEAT            1
+#define ENABLE_BLE_HEARTBEAT            0
 
 //*****************************************************************************
 //
