@@ -104,7 +104,7 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_BUTTON0 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_COM_UART_TX =
 {
-    .uFuncSel            = AM_HAL_PIN_22_UART0TX,
+    .uFuncSel            = AM_HAL_PIN_48_UART0TX,
     .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
 };
 
@@ -115,7 +115,7 @@ const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_COM_UART_TX =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AM_BSP_GPIO_COM_UART_RX =
 {
-    .uFuncSel            = AM_HAL_PIN_23_UART0RX
+    .uFuncSel            = AM_HAL_PIN_49_UART0RX
 };
 
 //*****************************************************************************
