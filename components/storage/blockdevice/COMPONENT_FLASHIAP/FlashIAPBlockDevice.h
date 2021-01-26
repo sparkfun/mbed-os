@@ -20,7 +20,7 @@
 
 #if DEVICE_FLASH
 
-#include "FlashIAP.h"
+#include "drivers/FlashIAP.h"
 #include "features/storage/blockdevice/BlockDevice.h"
 #include "platform/mbed_toolchain.h"
 
