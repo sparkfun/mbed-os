@@ -57,7 +57,11 @@
 #include "am_mcu_apollo.h"
 #include "am_util.h"
 #include "hci_drv_apollo3.h"
+
+// for the custom address fix below on Arduino
+#ifdef ARDUINO 
 #include "hci_cmd.h"
+#endif
 
 #include <string.h>
 #include "stdio.h"
@@ -160,28 +164,51 @@ void *BLE;
 //
 // To use this feature:
 //
-//    1) Enable the #define AM_CUSTOM_BDADDR below
-//    2) By default, all octets of the address are based on the 
-//       chip ID values. To set an octet to be the same across 
-//       all devices, set that octet value in an element in 
-//       the below variable g_BLEMacAdderss. 
-// 
-//       Any zero value element in g_BLEMacAddress is replaced
-//       with the coresponding chip id value.
+// 1: Define AM_CUSTOM_BDADDR
 //
-// 1:
-// Enable a custom address by enabling this define
-#define AM_CUSTOM_BDADDR
-
-// 2:
-// Set any common octet here. Leave element set to 0x00 to have it
-// set to a unique value based on the chip ID.
+//   Enable a custom address by enabling this define or 
+//   passing -D AM_CUSTOM_BDADDR to the mbed compile command
+//
+//   In this file: 
+//
+//   #define AM_CUSTOM_BDADDR
+//
+// or at the define the macro when building 
+//
+//   -D AM_CUSTOM_BDADDR
+//
+// 2: Set a vendor level template - setting it in the variable
+//    g_BLEMacAddress below
+//
+//    Set any common octet here. Leave element set to 0x00 to have it
+//    set to a unique value based on the chip ID.
+// or
+//    Template values can also be set via the following compile time
+//    macros:
+//
+//    AM_CUSTOM_BDADDR_TEMPLT0    set to an integer - the lower 3 octets (24 bits)
+//    AM_CUSTOM_BDADDR_TEMPLT1    set to an integer - the higher 3 octets (24 bits)
+//
+//    example:
+//     mbed compile -t GCC_ARM -m SFE_ARTEMIS_DK -D AM_CUSTOM_BDADDR -D AM_CUSTOM_BDADDR_TEMPLT0=0xaa1109
+//
+//    These #defines override any template values specified in b_BLEMacAddress
 // 
+//
+// Worth noting, these can also be set in your mbed_app.json file, with the following
+//
+//      "target.macros_add":["AM_CUSTOM_BDADDR=1", "AM_CUSTOM_BDADDR_TEMPLT1=0xff00aa"]
+//
+// ***************
+// ON ARDUINO 
+//   Build the library with the macro ARDUINO defined (-D ARDUINO)
+// 
+//----
+//
 // NOTE: Remember, array init is LSB->MSB
-
 uint8_t g_BLEMacAddress[6] = {0x00,0x00,0x00,0x00,0x00,0x00};
 
-// Command to set the MAC Address
+// Command code to set the MAC Address on an Ambqu apollo3
 #define AM_CODE_SET_BDADDR 0xFC32
 
 //**************************************************************
@@ -693,40 +720,60 @@ ap3_hciDrvWrite(uint8_t type, uint16_t len, uint8_t *pData)
         uint16_t opcode;
         BYTES_TO_UINT16(opcode, pData);
 
-        if (HCI_OPCODE_RESET == opcode){
+        if (HCI_OPCODE_RESET == opcode)
+        {
 
-            // The BLE is being reset. Set the MAC address using the 
-            // chip ID to derive a unique value. 
+            // The BLE is being reset. Set the MAC address  
+            //
+            // Three levels to get a unique value:
+            //
+            // 1: The chip ID to derive a unique value. 
+
             am_hal_mcuctrl_device_t sDevice;
             am_hal_mcuctrl_info_get(AM_HAL_MCUCTRL_INFO_DEVICEID, &sDevice);
+
             uint8_t bd_addr[6] = { sDevice.ui32ChipID0, sDevice.ui32ChipID0 >> 8, sDevice.ui32ChipID0 >> 16, 
                                     sDevice.ui32ChipID1, sDevice.ui32ChipID1 >> 8, sDevice.ui32ChipID1 >> 16};
 
-            // There is an option for the vendor to specifiy specific octets of this address,
-            // such that they are the same on all devices.
+            // 2: There is an option for the mcu vendor to specifiy specific octets 
+            //    of this address in a global var at the top of this file. 
+            //    such that they are the same on all devices.
             // 
             // Check if common device mac address octets are set.
-            if(sizeof(bd_addr) == sizeof(g_BLEMacAddress)){
-                for(uint i =0; i < sizeof(g_BLEMacAddress); i++){
-                    if(g_BLEMacAddress[i])
-                        bd_addr[i] = g_BLEMacAddress[i];
-                }
+            for(uint i =0; i < sizeof(g_BLEMacAddress); i++){
+                if(g_BLEMacAddress[i]) // !=0, set value
+                    bd_addr[i] = g_BLEMacAddress[i];
             }
+            
+            // 3: Via macros defined to 24 bit numbers
+#ifdef AM_CUSTOM_BDADDR_TEMPLT0
+            bd_addr[0] = AM_CUSTOM_BDADDR_TEMPLT0;          // lower 8 bits
+            bd_addr[1] = AM_CUSTOM_BDADDR_TEMPLT0 >> 8;     // mid 8 bits
+            bd_addr[2] = AM_CUSTOM_BDADDR_TEMPLT0 >> 16;    // high 8 bits
+#endif
+#ifdef AM_CUSTOM_BDADDR_TEMPLT1
+            bd_addr[3] = AM_CUSTOM_BDADDR_TEMPLT1;          // lower 8 bits
+            bd_addr[4] = AM_CUSTOM_BDADDR_TEMPLT1 >> 8;     // mid 8 bits
+            bd_addr[5] = AM_CUSTOM_BDADDR_TEMPLT1 >> 16;    // high 8 bits
+#endif
             // Send the command to 
             HciVendorSpecificCmd(AM_CODE_SET_BDADDR, sizeof(bd_addr), bd_addr);
             
-            // 2/2021 - Bug fix.             
+#ifdef ARDUINO
+            // 2/2021 - Bug fix for ArduinoBLE.             
             // The command is now queued, but the queue is never looked at/processed,
             // so the customn mac address is never applied. This is due to how
             // Arduino BLE interacts with Cordio - it doesn't call the standard
             // reset sequencing and events ...etc. So to pump queue processing, 
             // make the following call.
-            //
+            
             // Calling hciCmdRecvCmpl() will cause the queue to process this command
             hciCmdRecvCmpl(1);
+#endif
         }
     }
 #endif
+
 
     return len;
 }
