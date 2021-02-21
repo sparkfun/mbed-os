@@ -202,13 +202,19 @@ void *BLE;
 // ***************
 // ON ARDUINO 
 //   Build the library with the macro ARDUINO defined (-D ARDUINO)
-// 
+//
+// example:
+//     mbed compile -t GCC_ARM -m SFE_ARTEMIS_THING_PLUS -D AM_CUSTOM_BDADDR -D ARDUINO
 //----
 //
 // NOTE: Remember, array init is LSB->MSB
-uint8_t g_BLEMacAddress[6] = {0x00,0x00,0x00,0x00,0x00,0x00};
+//
+// By default we lable the address as a RANDOM STATIC address (see BLE spec) by
+// setting the top 2 (most sig) bits to 1 - or the top octet to 0xC0.
 
-// Command code to set the MAC Address on an Ambqu apollo3
+uint8_t g_BLEMacAddress[6] = {0x00,0x00,0x00,0x00,0x00,0xC0};
+
+// Command code to set the MAC Address on an apollo3
 #define AM_CODE_SET_BDADDR 0xFC32
 
 //**************************************************************
