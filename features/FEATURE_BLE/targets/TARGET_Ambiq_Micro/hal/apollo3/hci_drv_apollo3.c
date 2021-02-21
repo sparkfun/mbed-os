@@ -192,8 +192,9 @@ void *BLE;
 //    example:
 //     mbed compile -t GCC_ARM -m SFE_ARTEMIS_DK -D AM_CUSTOM_BDADDR -D AM_CUSTOM_BDADDR_TEMPLT0=0xaa1109
 //
-//    These #defines override any template values specified in b_BLEMacAddress
-// 
+//    These #defines override any template values specified in g_BLEMacAddress.
+//
+//    NOTE: If a octet value in the macro number is 0, it is not assigned 
 //
 // Worth noting, these can also be set in your mbed_app.json file, with the following
 //
@@ -750,18 +751,25 @@ ap3_hciDrvWrite(uint8_t type, uint16_t len, uint8_t *pData)
                 if(g_BLEMacAddress[i]) // !=0, set value
                     bd_addr[i] = g_BLEMacAddress[i];
             }
-            
-            // 3: Via macros defined to 24 bit numbers
+
+            // 3: Via macros defined to 24 bit numbers. If an octet is zero, we skip 
+            //    setting that octet it
 #ifdef AM_CUSTOM_BDADDR_TEMPLT0
-            bd_addr[0] = AM_CUSTOM_BDADDR_TEMPLT0;          // lower 8 bits
-            bd_addr[1] = AM_CUSTOM_BDADDR_TEMPLT0 >> 8;     // mid 8 bits
-            bd_addr[2] = AM_CUSTOM_BDADDR_TEMPLT0 >> 16;    // high 8 bits
+            if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF)
+                bd_addr[0] = AM_CUSTOM_BDADDR_TEMPLT0;          // lower 8 bits
+            if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF00)
+                bd_addr[1] = AM_CUSTOM_BDADDR_TEMPLT0 >> 8;     // mid 8 bits
+            if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF0000)
+                bd_addr[2] = AM_CUSTOM_BDADDR_TEMPLT0 >> 16;    // high 8 bits
 #endif
 #ifdef AM_CUSTOM_BDADDR_TEMPLT1
-            bd_addr[3] = AM_CUSTOM_BDADDR_TEMPLT1;          // lower 8 bits
-            bd_addr[4] = AM_CUSTOM_BDADDR_TEMPLT1 >> 8;     // mid 8 bits
-            bd_addr[5] = AM_CUSTOM_BDADDR_TEMPLT1 >> 16;    // high 8 bits
-#endif
+            if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF)
+                bd_addr[3] = AM_CUSTOM_BDADDR_TEMPLT1;          // lower 8 bits
+            if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF00)                
+                bd_addr[4] = AM_CUSTOM_BDADDR_TEMPLT1 >> 8;     // mid 8 bits
+            if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF0000)          
+                bd_addr[5] = AM_CUSTOM_BDADDR_TEMPLT1 >> 16;    // high 8 bits
+#endif            
             // Send the command to 
             HciVendorSpecificCmd(AM_CODE_SET_BDADDR, sizeof(bd_addr), bd_addr);
             
