@@ -218,6 +218,17 @@ uint8_t g_BLEMacAddress[6] = {0x00,0x00,0x00,0x00,0x00,0xC0};
 // Command code to set the MAC Address on an apollo3
 #define AM_CODE_SET_BDADDR 0xFC32
 
+#ifdef AM_CUSTOM_BDADDR_TEMPLT0
+    #ifndef AM_CUSTOM_BDADDR_TEMPLT0_MASK
+        #define AM_CUSTOM_BDADDR_TEMPLT0_MASK 0xFFFFFF
+    #endif
+#endif
+
+#ifdef AM_CUSTOM_BDADDR_TEMPLT1
+    #ifndef AM_CUSTOM_BDADDR_TEMPLT1_MASK
+        #define AM_CUSTOM_BDADDR_TEMPLT1_MASK 0xFFFFFF
+    #endif
+#endif
 //**************************************************************
 
 // Global handle used to send BLE events about the Hci driver layer.
@@ -755,20 +766,26 @@ ap3_hciDrvWrite(uint8_t type, uint16_t len, uint8_t *pData)
             // 3: Via macros defined to 24 bit numbers. If an octet is zero, we skip 
             //    setting that octet it
 #ifdef AM_CUSTOM_BDADDR_TEMPLT0
-            if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF)
-                bd_addr[0] = AM_CUSTOM_BDADDR_TEMPLT0;          // lower 8 bits
-            if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF00)
-                bd_addr[1] = AM_CUSTOM_BDADDR_TEMPLT0 >> 8;     // mid 8 bits
-            if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF0000)
-                bd_addr[2] = AM_CUSTOM_BDADDR_TEMPLT0 >> 16;    // high 8 bits
+            // if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF)
+            //     bd_addr[0] = AM_CUSTOM_BDADDR_TEMPLT0;          // lower 8 bits
+            // if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF00)
+            //     bd_addr[1] = AM_CUSTOM_BDADDR_TEMPLT0 >> 8;     // mid 8 bits
+            // if(AM_CUSTOM_BDADDR_TEMPLT0 & 0xFF0000)
+            //     bd_addr[2] = AM_CUSTOM_BDADDR_TEMPLT0 >> 16;    // high 8 bits
+            bd_addr[0] = (bd_addr[0] & ~AM_CUSTOM_BDADDR_TEMPLT0_MASK) | (AM_CUSTOM_BDADDR_TEMPLT0 & AM_CUSTOM_BDADDR_TEMPLT0_MASK);
+            bd_addr[1] = (bd_addr[1] & ~(AM_CUSTOM_BDADDR_TEMPLT0_MASK >> 8) ) | ( (AM_CUSTOM_BDADDR_TEMPLT0 & AM_CUSTOM_BDADDR_TEMPLT0_MASK) >> 8);
+            bd_addr[2] = (bd_addr[2] & ~(AM_CUSTOM_BDADDR_TEMPLT0_MASK >> 16) ) | ( (AM_CUSTOM_BDADDR_TEMPLT0 & AM_CUSTOM_BDADDR_TEMPLT0_MASK) >> 16);
 #endif
 #ifdef AM_CUSTOM_BDADDR_TEMPLT1
-            if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF)
-                bd_addr[3] = AM_CUSTOM_BDADDR_TEMPLT1;          // lower 8 bits
-            if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF00)                
-                bd_addr[4] = AM_CUSTOM_BDADDR_TEMPLT1 >> 8;     // mid 8 bits
-            if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF0000)          
-                bd_addr[5] = AM_CUSTOM_BDADDR_TEMPLT1 >> 16;    // high 8 bits
+            // if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF)
+            //     bd_addr[3] = AM_CUSTOM_BDADDR_TEMPLT1;          // lower 8 bits
+            // if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF00)                
+            //     bd_addr[4] = AM_CUSTOM_BDADDR_TEMPLT1 >> 8;     // mid 8 bits
+            // if(AM_CUSTOM_BDADDR_TEMPLT1 & 0xFF0000)          
+            //     bd_addr[5] = AM_CUSTOM_BDADDR_TEMPLT1 >> 16;    // high 8 bits
+            bd_addr[3] = (bd_addr[3] & ~AM_CUSTOM_BDADDR_TEMPLT1_MASK) | (AM_CUSTOM_BDADDR_TEMPLT1 & AM_CUSTOM_BDADDR_TEMPLT1_MASK);
+            bd_addr[4] = (bd_addr[4] & ~(AM_CUSTOM_BDADDR_TEMPLT1_MASK >> 8) ) | ( (AM_CUSTOM_BDADDR_TEMPLT1 & AM_CUSTOM_BDADDR_TEMPLT1_MASK) >> 8);
+            bd_addr[5] = (bd_addr[5] & ~(AM_CUSTOM_BDADDR_TEMPLT1_MASK >> 16) ) | ( (AM_CUSTOM_BDADDR_TEMPLT1 & AM_CUSTOM_BDADDR_TEMPLT1_MASK) >> 16);
 #endif            
             // Send the command to 
             HciVendorSpecificCmd(AM_CODE_SET_BDADDR, sizeof(bd_addr), bd_addr);
