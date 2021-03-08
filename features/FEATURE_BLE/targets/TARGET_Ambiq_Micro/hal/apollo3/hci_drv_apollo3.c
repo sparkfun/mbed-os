@@ -59,7 +59,7 @@
 #include "hci_drv_apollo3.h"
 
 // for the custom address fix below on Arduino
-#ifdef ARDUINO 
+#ifdef ARDUINO_BLE_FIX
 #include "hci_cmd.h"
 #endif
 
@@ -202,10 +202,10 @@ void *BLE;
 //
 // ***************
 // ON ARDUINO 
-//   Build the library with the macro ARDUINO defined (-D ARDUINO)
+//   Build the library with the macro ARDUINO_BLE_FIX defined (-D ARDUINO_BLE_FIX)
 //
 // example:
-//     mbed compile -t GCC_ARM -m SFE_ARTEMIS_THING_PLUS -D AM_CUSTOM_BDADDR -D ARDUINO
+//     mbed compile -t GCC_ARM -m SFE_ARTEMIS_THING_PLUS -D AM_CUSTOM_BDADDR -D ARDUINO_BLE_FIX
 //----
 //
 // NOTE: Remember, array init is LSB->MSB
@@ -790,7 +790,7 @@ ap3_hciDrvWrite(uint8_t type, uint16_t len, uint8_t *pData)
             // Send the command to 
             HciVendorSpecificCmd(AM_CODE_SET_BDADDR, sizeof(bd_addr), bd_addr);
             
-#ifdef ARDUINO
+#ifdef ARDUINO_BLE_FIX
             // 2/2021 - Bug fix for ArduinoBLE.             
             // The command is now queued, but the queue is never looked at/processed,
             // so the customn mac address is never applied. This is due to how
