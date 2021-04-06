@@ -509,6 +509,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_15 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_19 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_19_UART1RX
 };
 
@@ -529,6 +530,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_21 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_25 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_25_UART1RX
 };
 
