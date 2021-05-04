@@ -11,9 +11,9 @@ extern "C"
     uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, am_hal_gpio_intdir_e eIntDir);
     /** GPIO IRQ HAL structure. gpio_irq_s is declared in the target's HAL
  */
-    typedef struct gpio_irq_s gpio_irq_t;
+ n    // typedef struct gpio_irq_s gpio_irq_t;
 
-    typedef void (*gpio_irq_handler)(uint32_t id, gpio_irq_event event);
+    // typedef void (*gpio_irq_handler)(uint32_t id, gpio_irq_event event);
     extern void am_gpio_isr(void);
     static ap3_gpio_irq_control_t gpio_irq_control[AP3_GPIO_MAX_PADS];
 
@@ -78,7 +78,14 @@ extern "C"
             {
                 am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(pinNum));
                 ap3_gpio_irq_control_t irq_ctrl = gpio_irq_control[pinNum];
-                ((gpio_irq_handler)irq_ctrl.handler)(irq_ctrl.id, irq_ctrl.events);
+                uint8_t enabledEvents = irq_ctrl.events;
+                //Can't check if a rise or a fall caused the interrupt, must assume source from what is enabled
+                if(enabledEvents == (IRQ_RISE | IRQ_FALL))
+                {
+                    //if both are enabled we have to just assume it game from the rise, its the best we can do
+                    enabledEvents = IRQ_RISE;
+                }
+                ((gpio_irq_handler)irq_ctrl.handler)(irq_ctrl.id, enabledEvents);
             }
             gpio_int_mask >>= 1;
             pinNum++;
