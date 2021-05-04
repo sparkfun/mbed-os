@@ -333,6 +333,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_TX_46 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_2 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_2_UART0RX
 };
 
@@ -343,6 +344,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_2 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_11 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_11_UART0RX
 };
 
@@ -353,6 +355,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_11 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_17 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_17_UART0RX
 };
 
@@ -363,6 +366,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_17 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_21 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_21_UART0RX
 };
 
@@ -373,6 +377,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_21 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_23 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_23_UART0RX
 };
 
@@ -383,6 +388,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_23 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_27 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_27_UART0RX
 };
 
@@ -393,6 +399,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_27 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_29 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_29_UART0RX
 };
 
@@ -404,6 +411,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_29 =
 #if defined (AM_PACKAGE_BGA)
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_31 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_31_UART0RX
 };
 #endif // AM_PACKAGE_BGA
@@ -416,6 +424,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_31 =
 #if defined (AM_PACKAGE_BGA)
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_34 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_34_UART0RX
 };
 #endif // AM_PACKAGE_BGA
@@ -427,6 +436,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_34 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_40 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_40_UART0RX
 };
 
@@ -438,6 +448,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_40 =
 #if defined (AM_PACKAGE_BGA)
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_45 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_45_UART0RX
 };
 #endif // AM_PACKAGE_BGA
@@ -449,6 +460,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_45 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_49 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_49_UART0RX
 };
 
@@ -459,6 +471,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART0_RX_49 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_2 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_2_UART1RX
 };
 
@@ -469,6 +482,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_2 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_4 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_4_UART1RX
 };
 
@@ -479,6 +493,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_4 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_9 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_9_UART1RX
 };
 
@@ -489,6 +504,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_9 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_13 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_13_UART1RX
 };
 
@@ -499,6 +515,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_13 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_15 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_15_UART1RX
 };
 
@@ -520,6 +537,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_19 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_21 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_21_UART1RX
 };
 
@@ -542,6 +560,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_25 =
 #if defined (AM_PACKAGE_BGA)
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_36 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_36_UART1RX
 };
 #endif // AM_PACKAGE_BGA
@@ -554,6 +573,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_36 =
 #if defined (AM_PACKAGE_BGA)
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_38 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_38_UART1RX
 };
 #endif // AM_PACKAGE_BGA
@@ -565,6 +585,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_38 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_40 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_40_UART1RX
 };
 
@@ -576,6 +597,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_40 =
 #if defined (AM_PACKAGE_BGA)
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_43 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_43_UART1RX
 };
 #endif // AM_PACKAGE_BGA
@@ -587,6 +609,7 @@ const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_43 =
 //*****************************************************************************
 const am_hal_gpio_pincfg_t g_AP3_PER_UART1_RX_47 =
 {
+    .ePullup             = AM_HAL_GPIO_PIN_PULLUP_24K,
     .uFuncSel            = AM_HAL_PIN_47_UART1RX
 };
 
