@@ -11,7 +11,7 @@ extern "C"
     uint32_t ap3_gpio_enable_interrupts(uint32_t ui32Pin, am_hal_gpio_intdir_e eIntDir);
     /** GPIO IRQ HAL structure. gpio_irq_s is declared in the target's HAL
  */
- n    // typedef struct gpio_irq_s gpio_irq_t;
+     // typedef struct gpio_irq_s gpio_irq_t;
 
     // typedef void (*gpio_irq_handler)(uint32_t id, gpio_irq_event event);
     extern void am_gpio_isr(void);
