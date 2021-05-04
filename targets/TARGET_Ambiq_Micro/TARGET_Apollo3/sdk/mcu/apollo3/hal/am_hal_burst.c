@@ -224,7 +224,8 @@ am_hal_burst_mode_disable(am_hal_burst_mode_e *peBurstStatus)
     // Safely disable burst mode.
     //
     AM_CRITICAL_BEGIN
-    am_hal_flash_store_ui32((uint32_t*)&CLKGEN->FREQCTRL, CLKGEN_FREQCTRL_BURSTREQ_DIS);
+    //am_hal_flash_store_ui32((uint32_t*)&CLKGEN->FREQCTRL, CLKGEN_FREQCTRL_BURSTREQ_DIS);
+    CLKGEN->FREQCTRL_b.BURSTREQ = CLKGEN_FREQCTRL_BURSTREQ_DIS;
     AM_CRITICAL_END
 
     //
