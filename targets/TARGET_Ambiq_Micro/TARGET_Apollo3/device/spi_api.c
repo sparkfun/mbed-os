@@ -119,7 +119,21 @@ void spi_free(spi_t *obj){
 
 void spi_format(spi_t *obj, int bits, int mode, int slave){
     MBED_ASSERT(obj);
-    obj->spi.iom_obj.iom.cfg.eSpiMode = (am_hal_iom_spi_mode_e)mode;
+    switch(mode){
+        case 0:
+            obj->spi.iom_obj.iom.cfg.eSpiMode = AM_HAL_IOM_SPI_MODE_0;
+            break;
+        case 1:
+            obj->spi.iom_obj.iom.cfg.eSpiMode = AM_HAL_IOM_SPI_MODE_1;
+            break;
+        case 2:
+            obj->spi.iom_obj.iom.cfg.eSpiMode = AM_HAL_IOM_SPI_MODE_2;
+            break;
+        case 3:
+            obj->spi.iom_obj.iom.cfg.eSpiMode = AM_HAL_IOM_SPI_MODE_3;
+            break;
+
+    }
     iom_init(&obj->spi.iom_obj);
 }
 
