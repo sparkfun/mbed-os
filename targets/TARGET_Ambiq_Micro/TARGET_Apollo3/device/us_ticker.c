@@ -57,6 +57,7 @@ void us_ticker_init(void)
     NVIC_EnableIRQ(STIMER_CMPR0_IRQn);
     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
     am_hal_stimer_config(US_TICKER_FREQ);
+    am_hal_stimer_int_disable(AM_HAL_STIMER_INT_OVERFLOW);
     us_ticker_initialized = true;
 }
 
