@@ -68,6 +68,7 @@ void gpio_mode(gpio_t *obj, PinMode mode)
     am_hal_gpio_pincfg_allow_t pinConfigBools;
 
     obj->cfg.uFuncSel = AP3_PINCFG_FUNCSEL_GPIO; // gpio
+    pinConfigBools.uFuncSel = true;
 
     if (mode & (PinMode)PowerSwNone)
     {
