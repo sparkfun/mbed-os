@@ -44,7 +44,7 @@ typedef enum
     D6 = 6,
     D7 = 7,
     D8 = 8,
-    D9 = 9
+    D9 = 9,
     D10 = 10,
     D11 = 11,
     D12 = 12,
@@ -94,9 +94,16 @@ typedef enum
     A34 = D34,
     A35 = D35,
 
+    // A couple default values so mbed wont complain, users are encouraged to change these.
+    USBTX = 48,
+    USBRX = 49,
+    LED1 = 5,
+
     // Not connected
     NC = NC_VAL
 } PinName;
+#define STDIO_UART_TX USBTX
+#define STDIO_UART_RX USBRX
 
 // ADC Defaults
 #define ADCPIN A11
