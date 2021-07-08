@@ -2199,7 +2199,7 @@ am_hal_iom_configure(void *pHandle, am_hal_iom_config_t *psConfig)
                              _VAL2FLD(IOM0_CLKCFG_DIV3, IOM0_CLKCFG_DIV3_DIS)       |
                              _VAL2FLD(IOM0_CLKCFG_FSEL, IOM0_CLKCFG_FSEL_HFRC_DIV2) |
                              _VAL2FLD(IOM0_CLKCFG_IOCLKEN, 1);
-                IOMn(ui32Module)->MI2CCFG = _VAL2FLD(IOM0_MI2CCFG_STRDIS, 0)                            |
+                IOMn(ui32Module)->MI2CCFG = _VAL2FLD(IOM0_MI2CCFG_STRDIS, 1)                            |
                                             _VAL2FLD(IOM0_MI2CCFG_SMPCNT, 3)                            |
                                             _VAL2FLD(IOM0_MI2CCFG_SDAENDLY, 15)                         |
                                             _VAL2FLD(IOM0_MI2CCFG_SCLENDLY, 0)                          |
