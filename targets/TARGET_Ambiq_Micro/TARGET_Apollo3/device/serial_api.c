@@ -264,7 +264,11 @@ int serial_getc(serial_t *obj) {
   };
 
   do {
-    am_hal_uart_transfer(obj->serial.uart_control->handle, &am_hal_uart_xfer_read_single);
+    uint32_t status = am_hal_uart_transfer(obj->serial.uart_control->handle, &am_hal_uart_xfer_read_single);
+    if(status != AM_HAL_STATUS_SUCCESS)
+    {
+       return 0;
+    }
   } while (bytes_read == 0);
 
   return (int)rx_c;
