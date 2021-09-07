@@ -293,7 +293,27 @@ void serial_putc(serial_t *obj, int c) {
 
 int serial_readable(serial_t *obj) {
   MBED_ASSERT(obj->serial.uart_control != NULL);
-  return !(UARTn(obj->serial.uart_control->inst)->FR_b.RXFE);
+
+  // as long as character available in FIFO
+  while (!(UARTn(obj->serial.uart_control->inst)->FR_b.RXFE)) {
+  	
+    // if in error
+    if (UARTn(obj->serial.uart_control->inst)->RSR_b.FESTAT |
+        UARTn(obj->serial.uart_control->inst)->RSR_b.PESTAT |
+        UARTn(obj->serial.uart_control->inst)->RSR_b.BESTAT |
+        UARTn(obj->serial.uart_control->inst)->RSR_b.OESTAT)
+    {
+        // ignore the character in error. 
+        UARTn(obj->serial.uart_control->inst)->DR;
+    }
+    else
+    {
+	    return true;
+    }
+  }
+  
+  // no valid character in FIFO available
+  return false;
 }
 
 int serial_writable(serial_t *obj) {
