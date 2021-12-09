@@ -96,6 +96,8 @@ typedef enum
     // I2C
     I2C_SCL = AM_BSP_QWIIC_I2C_SCL_PIN,
     I2C_SDA = AM_BSP_QWIIC_I2C_SDA_PIN,
+	I2C1_SCL = D17,
+    I2C1_SDA = D16,
 
     // Qwiic
     QWIIC_SCL = I2C_SCL,
