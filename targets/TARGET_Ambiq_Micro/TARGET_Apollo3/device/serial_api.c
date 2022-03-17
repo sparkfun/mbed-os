@@ -305,6 +305,8 @@ int serial_readable(serial_t *obj) {
     {
         // ignore the character in error. 
         UARTn(obj->serial.uart_control->inst)->DR;
+        //clear errors in status register
+        UARTn(obj->serial.uart_control->inst)->RSR = 0;
     }
     else
     {
